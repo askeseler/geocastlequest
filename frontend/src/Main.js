@@ -13,7 +13,7 @@ import search from './icons/search.svg';
 import star from './icons/star.svg';
 import list from './icons/list.svg';
 import plus from './icons/plus.svg';
-import coworking from './icons/coworking.png';
+import geocastlequest from './icons/geocastlequest.png';
 
 let DEBUG = true;
 
@@ -81,12 +81,13 @@ class Main extends React.Component {
     }
   
     mobile_version() {
+      alert(this.state.page)
         return (
           <div className="container">
             <div className="Header"></div>
             <div className="Content">
               {this.state.page === "" ? <InfoPage /> : <div/>}
-              {this.state.page === "registration" ? <Registration /> : <div/>}
+              {this.state.page === "registration" ? <>register</> : <div/>}
               {this.state.page === "map" ? <MapPage /> : <div/>}
               {this.state.page === "add" ? <AddPage /> : <div/>}
               {this.state.page === "search" ? <SearchPage /> : <div/>}
@@ -101,11 +102,10 @@ class Main extends React.Component {
             </div>
             <div className="AppIcon">
               <a href="/">
-                <img src={coworking} alt="Coworking Icon" />
-              </a>
+                <img src={geocastlequest} alt="Icon" />              </a>
             </div>
             <div className="AppIconLarge">
-              <div>coworkingfriendly.com</div>
+              <div>geocastle.quest</div>
             </div>
             <div className="Menu1">
               <div onClick={this.loginOrRedirect}>
