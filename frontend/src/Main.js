@@ -83,13 +83,12 @@ class Main extends React.Component {
     }
   
     mobile_version() {
-      alert(this.state.page)
         return (
           <div className="container">
             <div className="Header"></div>
             <div className="Content">
               {this.state.page === "" ? <InfoPage /> : <div/>}
-              {this.state.page === "registration" ? <>register</> : <div/>}
+              {this.state.page === "registration" ? <Registration/> : <div/>}
               {this.state.page === "map" ? <MapPage /> : <div/>}
               {this.state.page === "add" ? <AddPage /> : <div/>}
               {this.state.page === "search" ? <SearchPage /> : <div/>}
