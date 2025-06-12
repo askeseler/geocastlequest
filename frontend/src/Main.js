@@ -28,6 +28,7 @@ class Main extends React.Component {
     }
   
     componentDidMount() {
+      this.setState({ page: page });
       this.mapLinksToState();
     }
 
