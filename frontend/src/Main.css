@@ -1,0 +1,150 @@
+/* General container styling */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 100px 1fr 100px;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  height: 100dvh;
+  background: black;
+}
+
+/* Area definitions for grid */
+.Header {
+  grid-area: 1 / 1 / 2 / 6;
+}
+
+.Content {
+  grid-area: 2 / 1 / 3 / 6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Footer {
+  grid-area: 3 / 1 / 4 / 6;
+}
+
+.UserIcon {
+  grid-area: 1 / 5 / 2 / 6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.AppIcon {
+  grid-area: 1 / 1 / 2 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.AppIconLarge {
+  grid-area: 1 / 2 / 2 / 5;
+  color: white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Menu1 {
+  grid-area: 3 / 1 / 4 / 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Menu2 {
+  grid-area: 3 / 2 / 4 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Menu3 {
+  grid-area: 3 / 3 / 4 / 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Menu4 {
+  grid-area: 3 / 4 / 4 / 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Menu5 {
+  grid-area: 3 / 5 / 4 / 6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Image styling */
+.AppIcon img,
+.UserIcon img {
+  width: 75px;
+  height: 75px;
+}
+
+.Menu1 img,
+.Menu2 img,
+.Menu3 img,
+.Menu4 img,
+.Menu5 img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Text styling */
+.AppIconLarge div {
+  font-size: 16px;
+}
+
+.Menu1 div,
+.Menu2 div,
+.Menu3 div,
+.Menu4 div,
+.Menu5 div {
+  text-align: center;
+}
+
+.Menu1 div div,
+.Menu2 div div,
+.Menu3 div div,
+.Menu4 div div,
+.Menu5 div div {
+  color: white;
+  font-size: 12px;
+}
+
+/* Body and root styling */
+html,
+body,
+#root,
+.mobile-div .container {
+  margin: 0;
+  height: 100dvh;
+}
+
+.mobile-div {
+  height: 100dvh;
+  width: 100dvw; /* This must be explicit for mobile browser android chrome */
+  color: pink;
+  overflow: hidden;
+  position: absolute;
+}
+
+/* Centered div styling */
+.centered-div {
+  width: calc(0.3 * 100vw);
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

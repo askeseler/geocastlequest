@@ -1,0 +1,25 @@
+{
+    "Default": {
+        "server_ip": "",
+        "remote_folder": "",
+        "local_folder": "",
+        "mode": "ssh",
+        "port": 22
+    },
+    "humusmonitor": {
+        "server_ip": "147.182.240.53",
+        "remote_folder": "~/projects/humusmonitor",
+        "local_folder": "../",
+        "mode": "deployment_server",
+        "port": 22,
+        "server_port": 8002
+    },
+    "frontend-backend-deployment": {
+        "server_ip": "147.182.240.53",
+        "remote_folder": "~/projects/coworkingfriendly",
+        "local_folder": "../",
+        "mode": "deployment_server",
+        "port": 22,
+        "server_port": 8003
+    }
+}

@@ -1,0 +1,75 @@
+/* Styling for the image */
+.clickable-image {
+    cursor: pointer;
+  }
+  
+  /* Overlay styles */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  
+
+  /* Styling for the input fields */
+  .input-field {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 2px;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    outline: none;
+  }
+
+  
+    /* Styling for the login box */
+  .centered-foreground-box {
+    position: fixed;                 /* Fixed positioning to stay in place when scrolling */
+    left: calc(50% - 175px);        /*  Half of width*/
+    top: calc(50% - 200px);        /*  Half of width*/
+    width: 350px;
+    height: 400px;
+    background-color: black;  
+    padding: 20px;
+    margin: 0px;
+    border: 2px solid gray;
+    border-radius: 2px;
+    color: white;
+    z-index: 1001;
+  }
+
+  .login-button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+    float: right; /* Right-align the button */
+    margin: 10px;
+  }
+
+  .sign-up-or-login {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+  }
+
+  .response-text {
+    position: absolute;
+    bottom: 50px;
+    padding-right: 20px;
+    text-align: justify;
+}

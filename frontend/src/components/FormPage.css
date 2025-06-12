@@ -1,0 +1,20 @@
+.scroll-container {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .scroll-content {
+    width: 100%;
+    height: calc(100dvh - 3px - 200px);/* Header and Footer of CSS grid together 200px. Height of centered div 100vh*/
+    padding: 20px;
+    color: #fff;
+    background-color: black;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+  
