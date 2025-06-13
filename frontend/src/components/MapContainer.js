@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Map from './Map.js';
-import { updateMap } from '../../redux/MapSlice.js'; 
-import Api from '../../api.js';
+import { updateMap } from '../redux/MapSlice.js'; 
+import Api from '../api.js';
 
 const aapi = new Api('alert', 'alert');
 
@@ -22,7 +22,7 @@ export const MapContainer = forwardRef(({
   const unsynchronizedMarkers = useSelector((state) => state.map.unsynchronizedMarkers);
 
   const saveState = ({ longitude, latitude, zoom, markers, unsynchronizedMarkers, markerSelected }) => {
-    dispatch(updateMap({ longitude, latitude, zoom, markers, unsynchronizedMarkers, markerSelected }));
+    dispatch(updateMap({ longitude, latitude, zoom }));
   };
 
   const loadMarkers = async (set) => {

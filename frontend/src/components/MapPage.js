@@ -5,7 +5,7 @@ import { updateAddress, updateName } from '../redux/FormSlice'; // Import Redux 
 import { updateLongitude, updateLatitude, updateZoom} from '../redux/MapSlice'; // Import Redux actions
 import crosshairIcon from '../icons/crosshair.svg'; // Adjust the path to your map icon
 import { connect } from 'react-redux';
-import Map from './Map';
+import { MapContainer } from './MapContainer';
 
 const MapPage = () => {
   const mapRef = useRef(); // Create a ref for the Map component
@@ -52,7 +52,7 @@ const MapPage = () => {
   return (
     <>
       <div className="map-container">
-        <Map width="100%" height="100%" select_marker_pos ref={mapRef} onUnmount={saveToRedux} onMount={loadFromRedux} /> {/* Pass address to Map component */}
+        <MapContainer width="100%" height="100%" select_marker_pos ref={mapRef} onUnmount={saveToRedux} onMount={loadFromRedux} /> {/* Pass address to Map component */}
         <div className="map-menu">
           <div className="map-input-group">
             <label className="map-input-label">Address</label>
