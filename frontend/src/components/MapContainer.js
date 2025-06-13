@@ -36,6 +36,22 @@ export const MapContainer = forwardRef(({
     }
   };
 
+  export const toggleMarkerActive = (mapRef, setMarkerActive, setRemoveShapeActive) => {
+  if (mapRef.current) {
+    if (mapRef?.current?.nUnsynchronizedMarkers() > 1) return;
+    setMarkerActive((prevState) => {
+      const newState = !prevState;
+      mapRef.current.setMarkerActive(newState);
+      if (newState) {
+        setRemoveShapeActive(false);
+        mapRef?.current?.setRemoveShapeActive(false);
+        mapRef.current.renderCanvas();
+      }
+      return newState;
+    });
+  }
+};
+
   let loadState;
   if (markerEndpoint) {
     loadState = loadMarkers;
