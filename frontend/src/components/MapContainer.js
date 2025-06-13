@@ -8,7 +8,6 @@ const aapi = new Api('alert', 'alert');
 
 export const toggleMarkerActive = (mapRef, setMarkerActive, setRemoveShapeActive) => {
   if (mapRef.current) {
-    if (mapRef?.current?.nUnsynchronizedMarkers() > 1) return;
     setMarkerActive((prevState) => {
       const newState = !prevState;
       mapRef.current.setMarkerActive(newState);
@@ -65,7 +64,7 @@ export const MapContainer = forwardRef(({
       width="640"
       height="480"
       canvas_width="600"
-      canvas_height="400"
+      canvas_height="500"
       ref={mapRef}
       onStateUpdate={saveState}
       onMount={loadState}

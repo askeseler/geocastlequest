@@ -89,7 +89,7 @@ const MapPage = () => {
                 className="map-input-field"
               />
 
-              <button className="map-blue-button" style={{width:"80px", height:"35px"}} onClick={()=>{if(mapRef.current)mapRef.current.toggleMarkerActive()}}>
+              <button className="map-blue-button" style={{width:"80px", height:"35px"}} onClick={()=>{toggleMarkerActive(mapRef, setMarkerActive, setRemoveShapeActive)}}>
                 <img src={crosshairIcon} style={{width:"20px", height:"20px"}}>
               </img></button>
             </div>
