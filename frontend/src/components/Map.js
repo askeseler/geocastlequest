@@ -49,7 +49,7 @@ class TileMap extends Component {
     this.address = "";
     this.longitude = 2.294694;
     this.latitude = 48.8584;
-    this.zoom = 15;
+    this.zoom = 19;
 
    }
 

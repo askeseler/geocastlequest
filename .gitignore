@@ -1,0 +1,31 @@
+# Ignore all __pycache__ folders
+**/__pycache__/
+*/backend/__pycache__/
+
+
+# Ignore Zone.Identifier files in backend/auth and backend
+backend/auth/*:Zone.Identifier
+backend/*:Zone.Identifier
+
+# Ignore build folder in frontend
+frontend/build/
+
+# Ignore node_modules folder in frontend
+frontend/node_modules/
+
+# Ignore all folders named db
+db/
+**/db/
+
+# Ignore Zone.Identifier files globally
+*:Zone.Identifier
+
+
+# Ignore all .env files
+**/.env
+
+*":mshield"
+
+notebooks/
+
+*.zip

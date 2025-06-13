@@ -21,5 +21,13 @@
         "mode": "deployment_server",
         "port": 22,
         "server_port": 8003
+    },
+    "geocastlequest": {
+        "server_ip": "147.182.240.53",
+        "remote_folder": "~/projects/coworkingfriendly",
+        "local_folder": "../",
+        "mode": "deployment_server",
+        "port": 22,
+        "server_port": 8003
     }
 }

@@ -2,7 +2,7 @@ from fastapi import FastAPI, Body, Depends, Request
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from backend.model import UserSchema, UserLoginSchema
 from backend.auth.auth_bearer import JWTBearer
 from backend.auth.rate_limiter import RateLimiter
@@ -67,7 +67,7 @@ async def send_signup_mail(request: Request):
         if not response["success"]:
             raise HTTPException(status_code=401, detail=response)
 
-    base_url = str('{uri.scheme}://{uri.netloc}/'.format(uri=request.url))
+    base_url = str('https://{uri.netloc}/'.format(uri=request.url))
     #access_token = secrets.token_urlsafe(30*3//4)
     #sign_up_token = access_token + "&" + email
     #sign_up_tokens.append(sign_up_token)
@@ -137,6 +137,25 @@ def set_http_only_cookie(response, key, value):
 async def api_token(request: Request):
     access_token = signJWT({"version":"0.0.1"})["access_token"]
     return access_token
+
+# Path where your tiles are stored
+TILE_DIR = "./backend/tiles"
+
+@app.get("/tiles/{z}/{x}/{y}.jpg", tags=["tiles"])
+async def get_tile(z: int, x: int, y: int):
+    #return JSONResponse({"dir": str(os.listdir("./backend/tiles"))})
+    # Modulo logic for zoom level 0 (10x10 grid)
+    if z == 0:
+        x = x % 10
+        y = y % 10
+
+    tile_path = os.path.join(TILE_DIR, str(z), str(x), f"{y}.jpg")
+
+    if not os.path.isfile(tile_path):
+        raise HTTPException(status_code=404, detail="Tile not found")
+
+    return FileResponse(tile_path, media_type="image/jpeg")
+
 
 @app.get("/user/logout", tags=["user_management"])
 async def logout(request: Request, response: Response):

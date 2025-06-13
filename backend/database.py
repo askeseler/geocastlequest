@@ -13,7 +13,7 @@ MONGO_DETAILS = "mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceNa
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
-database = client.coworkingfriendly
+database = client.geocastlequest
 users = database.get_collection("user_collection")
 
 ##################### USER MANAGEMENT #################
