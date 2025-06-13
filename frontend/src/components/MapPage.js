@@ -6,6 +6,8 @@ import { updateLongitude, updateLatitude, updateZoom} from '../redux/MapSlice'; 
 import crosshairIcon from '../icons/crosshair.svg'; // Adjust the path to your map icon
 import { connect } from 'react-redux';
 import { MapContainer } from './MapContainer';
+import { toggleMarkerActive } from './MapContainer';
+
 
 const MapPage = () => {
   const mapRef = useRef(); // Create a ref for the Map component

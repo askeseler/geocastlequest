@@ -6,6 +6,22 @@ import Api from '../api.js';
 
 const aapi = new Api('alert', 'alert');
 
+export const toggleMarkerActive = (mapRef, setMarkerActive, setRemoveShapeActive) => {
+  if (mapRef.current) {
+    if (mapRef?.current?.nUnsynchronizedMarkers() > 1) return;
+    setMarkerActive((prevState) => {
+      const newState = !prevState;
+      mapRef.current.setMarkerActive(newState);
+      if (newState) {
+        setRemoveShapeActive(false);
+        mapRef?.current?.setRemoveShapeActive(false);
+        mapRef.current.renderCanvas();
+      }
+      return newState;
+    });
+  }
+};
+
 export const MapContainer = forwardRef(({
   markerEndpoint,
   onSelectedMarkerChanged,
@@ -35,22 +51,6 @@ export const MapContainer = forwardRef(({
       alert("Kartendaten konnten nicht vom Server abgerufen werden. " + e);
     }
   };
-
-  export const toggleMarkerActive = (mapRef, setMarkerActive, setRemoveShapeActive) => {
-  if (mapRef.current) {
-    if (mapRef?.current?.nUnsynchronizedMarkers() > 1) return;
-    setMarkerActive((prevState) => {
-      const newState = !prevState;
-      mapRef.current.setMarkerActive(newState);
-      if (newState) {
-        setRemoveShapeActive(false);
-        mapRef?.current?.setRemoveShapeActive(false);
-        mapRef.current.renderCanvas();
-      }
-      return newState;
-    });
-  }
-};
 
   let loadState;
   if (markerEndpoint) {

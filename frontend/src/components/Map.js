@@ -46,7 +46,7 @@ class TileMap extends Component {
     this.nMaxMarkers = 1;//add no more then nMaxMarkers
     this.markerSelected = "";
     this.unsynchronizedMarkers = [];
-    this.markerActive = true;
+    this.markerActive = false;
     this.removeShape = false;
 
     this.isLoading = false; // Initialize loading flag
