@@ -15,6 +15,8 @@ const MapPage = () => {
 
   // Define state for address and name
   const [selectMarker, setSelectMarker] = useState(false);
+  const [markerActive, setMarkerActive] = useState(false);
+  const [removeShapeActive, setRemoveShapeActive] = useState(false);
   //const [name, setName] = useState('');
   const name = useSelector((state) => state.form.name);
   const address = useSelector((state) => state.form.address);
