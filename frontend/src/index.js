@@ -12,7 +12,11 @@ window.mobileCheck = function() {
   return check;
 };
 window.mobile = window.mobileCheck();
-window.api = window.location.protocol  + '//' + window.location.host//"http://localhost:8081";
+if (window.location.hostname === "localhost" && window.location.port === "3000") {
+  window.api = window.location.protocol + "//localhost:8003";
+} else {
+  window.api = window.location.protocol + "//" + window.location.host;
+}
 class App extends React.Component {
   render() {
     return (

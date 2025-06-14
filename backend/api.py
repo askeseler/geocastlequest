@@ -141,15 +141,17 @@ async def api_token(request: Request):
 # Path where your tiles are stored
 TILE_DIR = "./backend/tiles"
 
-@app.get("/tiles/{z}/{x}/{y}.jpg", tags=["tiles"])
+@app.get("/api/tiles/{z}/{x}/{y}")
 async def get_tile(z: int, x: int, y: int):
     #return JSONResponse({"dir": str(os.listdir("./backend/tiles"))})
     # Modulo logic for zoom level 0 (10x10 grid)
-    if z == 0:
-        x = x % 10
-        y = y % 10
+    x = x % 10
+    y = y % 10
 
-    tile_path = os.path.join(TILE_DIR, str(z), str(x), f"{y}.jpg")
+    tile_path = os.path.join(TILE_DIR, str(x), f"{y}.jpg")
+
+    print(tile_path)
+    print(os.listdir(TILE_DIR))
 
     if not os.path.isfile(tile_path):
         raise HTTPException(status_code=404, detail="Tile not found")
@@ -186,12 +188,15 @@ async def delete_all_users():
     return await delete_all_users_db()
 
 ######################## STATIC FILES #########################
-@app.get("{full_path:path}", tags=["static_files_frontend"])
+@app.get("/{full_path:path}", tags=["static_files_frontend"])
 async def catch_all(request: Request, full_path: str):
-    directory="frontend/build/"
-    full_path = directory + full_path
-    if os.path.isfile(full_path):
-        return FileResponse(full_path)
+    if full_path.startswith("api/"):
+        return Response(status_code=404)
+
+    directory = "frontend/build/"
+    target_path = os.path.join(directory, full_path)
+
+    if os.path.isfile(target_path):
+        return FileResponse(target_path)
     else:
-        full_path = directory+"index.html"
-        return FileResponse(full_path)
+        return FileResponse(os.path.join(directory, "index.html"))

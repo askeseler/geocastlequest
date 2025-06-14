@@ -14,7 +14,6 @@ const MapPage = () => {
   const dispatch = useDispatch(); // Redux dispatch function
 
   // Define state for address and name
-  const [selectMarker, setSelectMarker] = useState(false);
   const [markerActive, setMarkerActive] = useState(false);
   const [removeShapeActive, setRemoveShapeActive] = useState(false);
   //const [name, setName] = useState('');
@@ -57,7 +56,7 @@ const MapPage = () => {
   return (
     <>
       <div className="map-container">
-        <MapContainer width="100%" height="100%" select_marker_pos ref={mapRef} onUnmount={saveToRedux} onMount={loadFromRedux} onAddMarker={()=>alert("aa")}/>
+        <MapContainer width="100%" height="100%" select_marker_pos ref={mapRef} onUnmount={saveToRedux} onMount={loadFromRedux} onAddMarker={()=>{alert("Added marker"); setMarkerActive(false);}}/>
         <div className="map-menu">
           <div className="map-input-group">
             <label className="map-input-label">Address</label>
@@ -90,8 +89,8 @@ const MapPage = () => {
                 className="map-input-field"
               />
 
-              <button className="map-blue-button" style={{width:"80px", height:"35px"}} onClick={()=>{toggleMarkerActive(mapRef, setMarkerActive, setRemoveShapeActive)}}>
-                <img src={crosshairIcon} style={{width:"20px", height:"20px"}}>
+              <button className={markerActive?"map-green-button":"map-blue-button"} style={{width:"80px", height:"35px"}} onClick={()=>{toggleMarkerActive(mapRef, setMarkerActive, setRemoveShapeActive)}}>
+                <img src={crosshairIcon} style={{width:"20px", height:"20px", }}>
               </img></button>
             </div>
           </div>

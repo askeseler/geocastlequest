@@ -67,7 +67,7 @@ class TileMap extends Component {
     this.address = "";
     this.longitude = 0;//10.4541;//2.294694;
     this.latitude = 0;//51.1642;//48.8584;
-    this.zoom = 19;
+    this.zoom = 18;
     this.extra_zoom = 1;
    }
 
@@ -106,6 +106,9 @@ class TileMap extends Component {
 
   setMarkerActive(active = true){
     this.markerActive = active;
+    this.mouseX = undefined;
+    this.mouseY = undefined;
+    this.renderCanvas();
   }
 
   setRemoveShapeActive(active = true){
@@ -245,28 +248,62 @@ class TileMap extends Component {
       return newTileKeys.has(coordKey);
     });
 
-    const newTiles = [];
-    for (const { x, y } of new_tile_coords) {
-      const coordKey = `${x},${y}`;
-      if (!currentTiles.some((tile) => `${tile.x},${tile.y}` === coordKey)) {
-        let url;
-        if(this.mapStyle==="satellite"){url = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile//${zoom}/${y}/${x}`;}
-        if(this.mapStyle==="map"){url = `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`};
-        try {
-          const response = await fetch(url);//, { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS' } });
-          const blob = await response.blob();
-          const imgURL = URL.createObjectURL(blob);
-          newTiles.push({
-            x: x + n_tiles_pad,
-            y: y + n_tiles_pad,
-            imgURL,
-          });
-        } catch (error) {
-          console.error("Failed to fetch tile:", error);
-        }
-      }
+const newTiles = [];
+for (const { x, y } of new_tile_coords) {
+  const coordKey = `${x},${y}`;
+  if (!currentTiles.some((tile) => `${tile.x},${tile.y}` === coordKey)) {
+    let url;
+    if (this.mapStyle === "satellite") {
+      url = window.api+`/api/tiles/${zoom}/${y}/${x}`;
+    } else if (this.mapStyle === "map") {
+      url = `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
     }
-    console.log("exit fetchTiles")
+
+    console.log(url)
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+
+      const blob = await response.blob();
+      const imgURL = URL.createObjectURL(blob);
+
+      newTiles.push({
+        x: x + n_tiles_pad,
+        y: y + n_tiles_pad,
+        imgURL,
+      });
+    } catch (error) {
+      console.error("Failed to fetch tile:", url, error);
+    }
+  }
+}
+
+
+    // Preload all tile images
+    const preloadPromises = newTiles.map((tile) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = tile.imgURL;
+
+        img.onload = () => {
+          tile.img = img;
+          resolve();
+        };
+
+        img.onerror = (err) => {
+          console.error("Error preloading image:", tile.imgURL, err);
+          reject(err);
+        };
+      });
+    });
+
+    try {
+      await Promise.all(preloadPromises);
+    } catch (error) {
+      console.error("One or more tiles failed to preload:", error);
+    }
+
     return [...updatedCurrentTiles, ...newTiles];
   };
 
@@ -348,51 +385,34 @@ fetchTilesLonLat = async () => {
 };
 
 
-drawTiles = async (offsetX, shiftX, offsetY, shiftY, centerTileX, centerTileY) => {
-  const canvas1 = this.tileCanvas1.current;    // Off-screen (buffer) canvas
-  
-  // Check if the canvas is available
+drawTiles = (offsetX, shiftX, offsetY, shiftY, centerTileX, centerTileY) => {
+  const canvas1 = this.tileCanvas1.current; // Off-screen (buffer) canvas
+
   if (!canvas1) {
     console.error("Canvas element is not available");
-    return; // Exit the function if canvas is not available
+    return;
   }
 
-  const ctx = canvas1.getContext("2d");     // Get context of the buffer canvas
-  ctx.imageSmoothingEnabled = false;         // Disable smoothing for pixel art, if applicable
-  const tileSize = 255;                       // Size of each tile
+  const ctx = canvas1.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  const tileSize = 255;
 
-  // Clear the buffer canvas before rendering
   ctx.clearRect(0, 0, canvas1.width, canvas1.height);
 
-  // Use Promise.all to handle asynchronous image loading for each tile
-  const imagePromises = this.tiles.map((tile) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = tile.imgURL;
+  // Draw preloaded images directly
+  this.tiles.forEach((tile) => {
+    if (!tile.img) {
+      console.warn("Tile image missing:", tile);
+      return;
+    }
 
-      img.onload = () => {
-        const xPos = (tile.x - Math.floor(centerTileX)) * tileSize + offsetX + shiftX;
-        const yPos = (tile.y - Math.floor(centerTileY)) * tileSize + offsetY + shiftY;
+    const xPos = (tile.x - Math.floor(centerTileX)) * tileSize + offsetX + shiftX;
+    const yPos = (tile.y - Math.floor(centerTileY)) * tileSize + offsetY + shiftY;
 
-        // Draw the tile image on the buffer canvas
-        ctx.drawImage(img, xPos, yPos, tileSize, tileSize);
-        resolve(); // Resolve the promise after drawing the image
-      };
-
-      img.onerror = (err) => {
-        console.error("Error loading image:", tile.imgURL, err);
-        reject(err); // Reject the promise if the image fails to load
-      };
-    });
+    ctx.drawImage(tile.img, xPos, yPos, tileSize, tileSize);
   });
-
-  try {
-    // Wait for all image loading promises to resolve
-    await Promise.all(imagePromises);
-  } catch (error) {
-    console.error("Error drawing tiles:", error);
-  }
 };
+
 
 lonLat2pxPos(this_longitude, this_latitude, zoom, longitude, latitude, canvas_width, canvas_height) {
   let x = this.lon2tile(this_longitude, zoom);
@@ -710,7 +730,7 @@ renderCanvas = async () => {
       let id = nanoid(12);
       this.setMarkers([{ "coordinates":[longitude, latitude], type: "Point", "id":id }, ...this.markers]);
       this.setMarkerSelected(id);
-      this.markerActive = false;
+      this.setMarkerActive(false);
       if (this.props.onAddMarker) this.props.onAddMarker();
       this.renderCanvas();
       this.forceUpdate();
