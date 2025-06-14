@@ -38,8 +38,8 @@ const MapPage = () => {
     }
   };
 
-  //Save to redux when component unmounts
   const saveToRedux = ({longitude, latitude, zoom}) => {
+    alert("save to redux")
     dispatch(updateLongitude(longitude));
     dispatch(updateLatitude(latitude)); 
     dispatch(updateZoom(zoom)); 

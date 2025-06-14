@@ -614,7 +614,6 @@ renderCanvas = async () => {
     canvas.addEventListener("touchstart", this.handleMouseDown, { passive: false });
     canvas.addEventListener("touchmove", this.handleMouseMove, { passive: false });
     canvas.addEventListener("touchend", this.handleMouseUp);
-    this.fillCanvasWithGray();
 
     window.addEventListener("beforeunload", this.onUnmount);
     this.onMount();
@@ -634,7 +633,6 @@ renderCanvas = async () => {
   }
 
   async setData(longitude, latitude, zoom, markers, unsynchronizedMarkers, markerSelected) {
-    return;
     if (
       longitude === undefined ||
       latitude === undefined ||
@@ -647,9 +645,6 @@ renderCanvas = async () => {
       );
     }
 
-    this.longitude = longitude;
-    this.latitude = latitude;
-    this.zoom = zoom;
     this.markers = markers;
     this.unsynchronizedMarkers = unsynchronizedMarkers;
     this.markerSelected = markerSelected;
@@ -663,13 +658,14 @@ renderCanvas = async () => {
       if (this.props.latitude) this.latitude = this.props.latitude;
       if (this.props.zoom) this.zoom = this.props.zoom;
       this.props.onMount(this.setData);
+      this.renderCanvas();
     }
   }
 
   async onUnmount(e){// Provide hook to save longitude, latitude and zoom. To be used by parent component e.g. with redux.
     if(this.props.onUnmount){
           await this.props.onUnmount({ longitude:this.longitude, latitude: this.latitude, zoom:this.zoom, markers:this.markers, 
-            unsynchronizedMarkers: this.unsynchronizedMarkers, markerSelected:this.markerSelected});
+          unsynchronizedMarkers: this.unsynchronizedMarkers, markerSelected:this.markerSelected});
     }
   }
 

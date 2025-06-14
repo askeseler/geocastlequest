@@ -37,10 +37,10 @@ export const MapContainer = forwardRef(({
   const unsynchronizedMarkers = useSelector((state) => state.map.unsynchronizedMarkers);
 
   const saveState = ({ longitude, latitude, zoom, markers, unsynchronizedMarkers, markerSelected }) => {
-    dispatch(updateMap({ longitude, latitude, zoom }));
+    dispatch(updateMap({ longitude, latitude, zoom, markers }));
   };
 
-  const loadMarkers = async (set) => {
+  const loadMarkersFromBackend = async (set) => {
     set(longitude, latitude, zoom, [], [], unsynchronizedMarkers, markerSelected);
     try {
       const farmMarkers = await aapi.get(markerEndpoint, null, "There was an error fetching the farm markers");
@@ -51,12 +51,17 @@ export const MapContainer = forwardRef(({
     }
   };
 
+  const loadMarkers = async (set) => {
+    alert("loadMarkers")
+    set(longitude, latitude, zoom, []);
+  };
+
   let loadState;
   if (markerEndpoint) {
-    loadState = loadMarkers;
+    loadState = loadMarkersFromBackend;
   }
   else{
-    loadState = () => {};
+    loadState = loadMarkers;
   }
 
   return (

@@ -7,7 +7,7 @@ const mapSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    updateMap: (state, action) =>{return {... state, longitude:action.payload.longitude, latitude:action.payload.longitude, zoom:action.payload.zoom}},//TODO
+    updateMap: (state, action) =>{return {... state, longitude:action.payload.longitude, latitude:action.payload.longitude, zoom:action.payload.zoom, markers: action.payload.markers}},//TODO
     updateLatitude: (state, action) => {state.latitude = action.payload;},
     updateLongitude: (state, action) => {state.longitude = action.payload;},
     updateZoom: (state, action) => {state.zoom = action.payload;},
