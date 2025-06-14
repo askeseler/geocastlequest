@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { nanoid } from 'nanoid';
 import mapIcon from '../icons/map.svg'; // Adjust the path to your map icon
 import markerIcon from '../icons/marker.svg';
+import tower_stone_small from '../assets/buildings/tower_stone_small.png'
 import markerBlue from '../icons/marker.svg';
 import markerGreen from '../icons/marker.svg'; 
 
@@ -67,7 +68,7 @@ class TileMap extends Component {
     this.address = "";
     this.longitude = 0;//10.4541;//2.294694;
     this.latitude = 0;//51.1642;//48.8584;
-    this.zoom = 18;
+    this.zoom = 19;
     this.extra_zoom = 1;
    }
 
@@ -259,8 +260,6 @@ for (const { x, y } of new_tile_coords) {
       url = `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
     }
 
-    console.log(url)
-
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
@@ -435,7 +434,8 @@ drawMarkers = async (longitude, latitude, zoom, canvas_width, canvas_height) => 
   let markersLoaded = 0;
 
   if (this.markerActive) {
-      await this.drawSvg(markerIcon, this.mouseX +marker_shift_x, this.mouseY + marker_shift_y);
+      //await this.drawSvg(markerIcon, this.mouseX +marker_shift_x, this.mouseY + marker_shift_y);
+      await this.drawPng(tower_stone_small, this.mouseX, this.mouseY);
   }
 
   return new Promise((resolve) => {
@@ -447,9 +447,9 @@ drawMarkers = async (longitude, latitude, zoom, canvas_width, canvas_height) => 
         const { x_px_pos, y_px_pos } = this.lonLat2pxPos(longitude, latitude, zoom, marker["coordinates"][0], marker["coordinates"][1], canvas_width, canvas_height);
 
         if (this.markerSelected === marker.id)
-            await this.drawSvg(markerGreen, x_px_pos + marker_shift_x, y_px_pos + marker_shift_y);
+            await this.drawPng(tower_stone_small, x_px_pos, y_px_pos);
           
-          else await this.drawSvg(markerIcon, x_px_pos + marker_shift_x, y_px_pos + marker_shift_y);
+          else await this.drawPng(tower_stone_small, x_px_pos, y_px_pos);
           markersLoaded++;
 
           if (markersLoaded === this.markers.length) {
@@ -478,6 +478,29 @@ drawSvg = async (icon_src, x, y) => {
       };
   });
 };
+
+drawPng = async (iconSrc, x, y) => {
+  const canvas = this.tileCanvas1.current;
+  const ctx = canvas.getContext('2d');
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = iconSrc;
+
+    img.onload = () => {
+      const offsetX = x - img.width / 2;
+      const offsetY = y - img.height / 2;
+      ctx.drawImage(img, offsetX, offsetY, img.width, img.height);
+      resolve();
+    };
+
+    img.onerror = (error) => {
+      reject(new Error("Failed to load PNG image: " + error));
+    };
+  });
+};
+
+
 
 renderCanvas = async () => {
   if(!this.tileCanvas.current ||!this.tileCanvas1.current)return;
@@ -735,6 +758,19 @@ renderCanvas = async () => {
       this.renderCanvas();
       this.forceUpdate();
     }
+
+    drawCircle = async (x, y, radius = 50, color = 'blue') => {
+      const canvas = this.tileCanvas1.current;
+      const ctx = canvas.getContext('2d');
+
+      return new Promise((resolve) => {
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        resolve();
+      });
+    };
     
     handleClick = (event) => {
       if(this.markerActive && !this.removeShape)this.addMarker();
@@ -746,7 +782,7 @@ renderCanvas = async () => {
         for(let marker of this.markers){
           const { x_px_pos, y_px_pos } = this.lonLat2pxPos(this.longitude, this.latitude, this.zoom, marker["coordinates"][0], marker["coordinates"][1], this.canvas_width, this.canvas_height);
           const xCenter = x_px_pos;// - 50 * (cssWidth/realWidth);
-          const yCenter = y_px_pos - 60 * (cssHeight/realHeight);
+          const yCenter = y_px_pos - (cssHeight/realHeight);
           const distance = Math.sqrt((this.mouseX - xCenter) ** 2 + (this.mouseY - yCenter) ** 2);
             if (distance < 30) {
               alert("clicked")
@@ -756,8 +792,10 @@ renderCanvas = async () => {
                 else{
                   this.setMarkerSelected(marker["id"]);
                   if(this.props.onSelectedMarkerChanged)this.props.onSelectedMarkerChanged(marker["id"]);
-                  this.renderCanvas();
-                }
+                }                
+                this.renderCanvas();    
+                this.drawCircle( xCenter, yCenter, 30, 'rgba(255, 0, 0, 0.5)');
+            
             }
           }
       }
