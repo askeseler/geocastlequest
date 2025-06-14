@@ -36,7 +36,7 @@ export const MapContainer = forwardRef(({
   const markers = useSelector((state) => state.map.markers);
   const unsynchronizedMarkers = useSelector((state) => state.map.unsynchronizedMarkers);
 
-  const saveState = ({ longitude, latitude, zoom, markers, unsynchronizedMarkers, markerSelected }) => {
+  const saveState = ({ longitude, latitude, zoom, markers }) => {
     dispatch(updateMap({ longitude, latitude, zoom, markers }));
   };
 
@@ -51,18 +51,9 @@ export const MapContainer = forwardRef(({
     }
   };
 
-  const loadMarkers = async (set) => {
-    alert("loadMarkers")
+  const loadState = async (set) => {
     set(longitude, latitude, zoom, []);
   };
-
-  let loadState;
-  if (markerEndpoint) {
-    loadState = loadMarkersFromBackend;
-  }
-  else{
-    loadState = loadMarkers;
-  }
 
   return (
     <Map

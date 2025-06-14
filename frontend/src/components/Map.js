@@ -45,7 +45,6 @@ class TileMap extends Component {
     this.markers = [];
     this.nMaxMarkers = 1;//add no more then nMaxMarkers
     this.markerSelected = "";
-    this.unsynchronizedMarkers = [];
     this.markerActive = false;
     this.removeShape = false;
 
@@ -75,7 +74,7 @@ class TileMap extends Component {
   async stateUpdate() {
     if(this.props.onStateUpdate){
       await this.props.onStateUpdate({ longitude:this.longitude, latitude: this.latitude, zoom:this.zoom, markers:this.markers, 
-        unsynchronizedMarkers: this.unsynchronizedMarkers, markerSelected:this.markerSelected,});
+         markerSelected:this.markerSelected,});
     }
     this.renderCanvas();
   }
@@ -100,29 +99,9 @@ class TileMap extends Component {
       this.stateUpdate();
   }
 
-  setUnsynchronizedMarkers(value) {
-      this.unsynchronizedMarkers = value;
-      this.stateUpdate();
-  }
-
   setMarkerSelected(value) {
       this.markerSelected = value;
       this.stateUpdate();
-  }
-
-  resetUnsynchronizedMarkers() {
-    this.unsynchronizedMarkers = [];
-    this.stateUpdate();
-  }
-
-  getUnsynchronizedMarkers = () => {
-    return this.markers.filter(marker =>
-      this.unsynchronizedMarkers.includes(marker.id)
-    );
-  };
-
-  nUnsynchronizedMarkers(){
-    return this.unsynchronizedMarkers.length;
   }
 
   setMarkerActive(active = true){
@@ -133,33 +112,18 @@ class TileMap extends Component {
     this.removeShape = active;
   }
 
-  selectedMarkerIsNew(){
-    return this.unsynchronizedMarkers.includes(this.markerSelected);
-  }
-
   getSelectedMarker(){
-    //this.markers has all markers in it including unsynchronized markers
     return this.markers.find(marker => marker.id === this.markerSelected);
-  }
-
-  removeSelectedMarker(marker){
-    this.unsynchronizedMarkers = this.unsynchronizedMarkers.filter(
-      (id) => id !== this.markerSelected
-    );
   }
 
   async doRemoveShape(id, shapeType) {
     if (this.props.onRemoveShape) {
       if (shapeType === "marker") {
         let canRemove = false;
-        if (this.unsynchronizedMarkers.includes(this.markerSelected)) {
-          canRemove = true;
-        } else {
-          canRemove = await this.props.onRemoveShape(id, "marker");
-        }
+        canRemove = await this.props.onRemoveShape(id, "marker");
+
         if (canRemove) {
           this.setMarkers(this.markers.filter(marker => marker.id !== id));
-          this.setUnsynchronizedMarkers(this.unsynchronizedMarkers.filter(marker => marker !== id));
           this.renderCanvas();
         } else {
           alert("Could not delete shape.");
@@ -464,8 +428,6 @@ drawMarkers = async (longitude, latitude, zoom, canvas_width, canvas_height) => 
 
         if (this.markerSelected === marker.id)
             await this.drawSvg(markerGreen, x_px_pos + marker_shift_x, y_px_pos + marker_shift_y);
-          else if (this.unsynchronizedMarkers.includes(marker.id))
-            await this.drawSvg(markerBlue, x_px_pos + marker_shift_x, y_px_pos + marker_shift_y);
           
           else await this.drawSvg(markerIcon, x_px_pos + marker_shift_x, y_px_pos + marker_shift_y);
           markersLoaded++;
@@ -477,7 +439,6 @@ drawMarkers = async (longitude, latitude, zoom, canvas_width, canvas_height) => 
   });
 };
 
-// Helper function to draw an SVG image asynchronously
 drawSvg = async (icon_src, x, y) => {
   const canvas = this.tileCanvas1.current;
   const ctx = canvas.getContext('2d');
@@ -610,7 +571,6 @@ renderCanvas = async () => {
     canvas.addEventListener("mousemove", this.handleMouseMove);
     canvas.addEventListener("mouseup", this.handleMouseUp);
 
-
     canvas.addEventListener("touchstart", this.handleMouseDown, { passive: false });
     canvas.addEventListener("touchmove", this.handleMouseMove, { passive: false });
     canvas.addEventListener("touchend", this.handleMouseUp);
@@ -632,7 +592,7 @@ renderCanvas = async () => {
     canvas.removeEventListener("touchend", this.handleMouseUp);
   }
 
-  async setData(longitude, latitude, zoom, markers, unsynchronizedMarkers, markerSelected) {
+  async setData(longitude, latitude, zoom, markers) {
     if (
       longitude === undefined ||
       latitude === undefined ||
@@ -646,17 +606,16 @@ renderCanvas = async () => {
     }
 
     this.markers = markers;
-    this.unsynchronizedMarkers = unsynchronizedMarkers;
-    this.markerSelected = markerSelected;
+    this.longitude = longitude;
+    this.latitude = latitude;
+    this.zoom = zoom;
+
     await this.fetchTilesLonLat();
-    this.setState({})
+    await this.renderCanvas();
   }
 
   async onMount() {
     if (this.props.onMount) {
-      if (this.props.longitude) this.longitude = this.props.longitude;
-      if (this.props.latitude) this.latitude = this.props.latitude;
-      if (this.props.zoom) this.zoom = this.props.zoom;
       this.props.onMount(this.setData);
       this.renderCanvas();
     }
@@ -664,8 +623,7 @@ renderCanvas = async () => {
 
   async onUnmount(e){// Provide hook to save longitude, latitude and zoom. To be used by parent component e.g. with redux.
     if(this.props.onUnmount){
-          await this.props.onUnmount({ longitude:this.longitude, latitude: this.latitude, zoom:this.zoom, markers:this.markers, 
-          unsynchronizedMarkers: this.unsynchronizedMarkers, markerSelected:this.markerSelected});
+          await this.props.onUnmount({ longitude:this.longitude, latitude: this.latitude, zoom:this.zoom, markers:this.markers, markerSelected:this.markerSelected});
     }
   }
 
@@ -748,17 +706,14 @@ renderCanvas = async () => {
     }
 
   addMarker(){
-      //Add marker to this.markers; also add id to this unsynchronizedMarkers
-      if(this.unsynchronizedMarkers.length >= this.nMaxMarkers)return;
       let {longitude, latitude} = this.mouseLonLat();
       let id = nanoid(12);
       this.setMarkers([{ "coordinates":[longitude, latitude], type: "Point", "id":id }, ...this.markers]);
       this.setMarkerSelected(id);
-      this.setUnsynchronizedMarkers([...this.unsynchronizedMarkers, id]);
       this.markerActive = false;
       if (this.props.onAddMarker) this.props.onAddMarker();
       this.renderCanvas();
-      this.forceUpdate(); // Trigger re-render
+      this.forceUpdate();
     }
     
     handleClick = (event) => {
@@ -774,6 +729,7 @@ renderCanvas = async () => {
           const yCenter = y_px_pos - 60 * (cssHeight/realHeight);
           const distance = Math.sqrt((this.mouseX - xCenter) ** 2 + (this.mouseY - yCenter) ** 2);
             if (distance < 30) {
+              alert("clicked")
                 if(this.removeShape){
                   this.doRemoveShape(marker["id"], "marker")
                 }

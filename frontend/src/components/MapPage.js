@@ -34,12 +34,11 @@ const MapPage = () => {
   // Handle search button click
   const handleSearchClick = () => {
     if (mapRef.current) {
-      mapRef.current.fetchCoordinates(address); // Call the method
+      mapRef.current.fetchCoordinates(address);
     }
   };
 
   const saveToRedux = ({longitude, latitude, zoom}) => {
-    alert("save to redux")
     dispatch(updateLongitude(longitude));
     dispatch(updateLatitude(latitude)); 
     dispatch(updateZoom(zoom)); 
@@ -49,14 +48,16 @@ const MapPage = () => {
   const longitude = useSelector((state) => state.map.longitude);
   const latitude = useSelector((state) => state.map.latitude);
   const zoom = useSelector((state) => state.map.zoom);
-  const loadFromRedux = (set) => {
-    set(longitude, latitude, zoom);
+  const markers = useSelector((state) => state.map.markers);
+
+  const loadFromRedux = (setData) => {
+    setData(longitude, latitude, zoom, markers);
   };
 
   return (
     <>
       <div className="map-container">
-        <MapContainer width="100%" height="100%" select_marker_pos ref={mapRef} onUnmount={saveToRedux} onMount={loadFromRedux} /> {/* Pass address to Map component */}
+        <MapContainer width="100%" height="100%" select_marker_pos ref={mapRef} onUnmount={saveToRedux} onMount={loadFromRedux} onAddMarker={()=>alert("aa")}/>
         <div className="map-menu">
           <div className="map-input-group">
             <label className="map-input-label">Address</label>
